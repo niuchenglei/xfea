@@ -1,0 +1,57 @@
+
+ECHO="/bin/echo"
+COLOR_START="\033[33m"
+COLOR_END="\033[0m"
+
+CXX=g++
+RM=rm
+##CXXFLAGS= -g -W -Wall -O2 -std=c++11
+CXXFLAGS= -w -O2 -W -Wall -fPIC
+CUR_VERSION=$(shell git describe --always)
+COMPILE_HOSTNAME=$(shell hostname)
+COMPILE_PWD=$(shell pwd)
+
+LIB_BASE_DIR=./src
+BUILD_DIR=build
+BUILD_OBJ_DIR=$(BUILD_DIR)/obj
+BUILD_BIN_DIR=$(BUILD_DIR)/bin
+UNITTES	=$(BUILD_BIN_DIR)/unittest
+
+FEALIB_MODULE=bisheng_offline
+FEALIB_OBJS=$(patsubst %.cpp,%.o,$(shell find src/ -name "*.cpp" -print))
+FEALIB_OUTPUT=$(BUILD_DIR)/bisheng
+FEALIB_LIB=$(FEALIB_OUTPUT)/lib/lib$(FEALIB_MODULE).a
+## FEALIB_TEST=$(FEALIB_OUTPUT)/bisheng_test
+DEPEND_INCPATH=-I$(LIB_BASE_DIR)/
+DEPEND_LIBPATH=-L$(LIB_BASE_DIR)/
+
+all: $(FEALIB_LIB)
+	@mkdir -p $(BUILD_DIR)/
+	@${ECHO} -e $(COLOR_START)"[make bisheng_offline all succ]"$(COLOR_END)
+
+$(FEALIB_LIB): $(FEALIB_OBJS) 
+	@mkdir -p $(FEALIB_OUTPUT)/lib
+	@mkdir -p $(FEALIB_OUTPUT)/include	
+	@mkdir -p $(FEALIB_OUTPUT)/include/common/
+	@mkdir -p $(FEALIB_OUTPUT)/include/core/
+	@mkdir -p $(FEALIB_OUTPUT)/include/feature_op/
+	@mkdir -p $(FEALIB_OUTPUT)/include/preprocess_op/
+	@mkdir -p $(FEALIB_OUTPUT)/include/util/
+	@echo "[bisheng_offline][ar:'$^'][Target:'$@']"
+	ar rcs $@ $^
+	-@$(RM) -rf $(LIB_BASE_DIR)/*/*.o
+	@cp src/common/*.h $(FEALIB_OUTPUT)/include/common/
+	@cp src/core/*.h $(FEALIB_OUTPUT)/include/core/
+	@cp src/feature_op/*.h $(FEALIB_OUTPUT)/include/feature_op/
+	@cp src/util/*.h $(FEALIB_OUTPUT)/include/util/
+
+%.o: %.cpp $(LIB_BASE_DIR)/*/*.h
+	@echo "COMPILING[bisheng_offline][Target:'$@', Using:'$<'] beginning..."
+	@$(CXX) -c $(CXXFLAGS) $(DEPEND_INCPATH) $< -o $@ -DBISHENG_VERSION_STR=\"$(CUR_VERSION)\" -DBISHENG_COMPILE_HOSTNAME_STR=\"$(COMPILE_HOSTNAME)\" -DBISHENG_COMPILE_PWD_STR=\"$(COMPILE_PWD)\"
+	@${ECHO} -e $(COLOR_START)"COMPILING[bisheng_offline][Target:'$@', Using:'$<'] successfully."${COLOR_END}
+
+clean:
+	-@$(RM) -rf $(BUILD_DIR)
+	-@$(RM) -rf $(LIB_BASE_DIR)/*/*.o
+	@${ECHO} -e $(COLOR_START)"[make bisheng_offline clean done]"${COLOR_END}
+

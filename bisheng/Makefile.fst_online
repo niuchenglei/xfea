@@ -1,0 +1,48 @@
+
+ECHO="/bin/echo"
+COLOR_START="\033[33m"
+COLOR_END="\033[0m"
+
+CXX=g++
+RM=rm
+CXXFLAGS= -w -O3 -W -Wall -fPIC
+CUR_VERSION=$(shell git describe --always)
+COMPILE_HOSTNAME=$(shell hostname)
+COMPILE_PWD=$(shell pwd)
+
+LIB_BASE_DIR=./src
+BUILD_DIR=build
+BUILD_OBJ_DIR=$(BUILD_DIR)/obj
+BUILD_BIN_DIR=$(BUILD_DIR)/bin
+UNITTES	=$(BUILD_BIN_DIR)/unittest
+
+FEALIB_MODULE=bisheng_fst_online
+FEALIB_OBJS=$(patsubst %.cpp,%.o,$(shell find src/ -name "*.cpp" -print))
+FEALIB_OUTPUT=$(BUILD_DIR)/bisheng
+FEALIB_LIB=$(FEALIB_OUTPUT)/lib/lib$(FEALIB_MODULE).a
+## FEALIB_TEST=$(FEALIB_OUTPUT)/bisheng_test
+USE_BASE_LOG_FLAG=_BISHENG_USE_BASE_LOG_
+DEPEND_INCPATH=-I$(LIB_BASE_DIR)/ -I/home/w/include/
+#DEPEND_LIBPATH=-L/home/w/lib64/
+#DEPEND_LIB=-lbase
+
+all: $(FEALIB_LIB)
+	@mkdir -p $(BUILD_DIR)/
+	@${ECHO} -e $(COLOR_START)"[make bisheng_fst_online all succ]"$(COLOR_END)
+
+$(FEALIB_LIB): $(FEALIB_OBJS) 
+	@echo "[ar:'$^'][Target:'$@']"
+	@mkdir -p $(FEALIB_OUTPUT)/lib
+	ar rcs $@ $^
+	-@$(RM) -rf $(LIB_BASE_DIR)/*/*.o
+
+%.o: %.cpp $(LIB_BASE_DIR)/*/*.h
+	@echo "COMPILING[bisheng_fst_online][Target:'$@', Using:'$<'] beginning..."
+	@$(CXX) -c $(CXXFLAGS) $(DEPEND_INCPATH) $< -o $@ -D$(USE_BASE_LOG_FLAG) -DBISHENG_VERSION_STR=\"$(CUR_VERSION)\" -DBISHENG_COMPILE_HOSTNAME_STR=\"$(COMPILE_HOSTNAME)\" -DBISHENG_COMPILE_PWD_STR=\"$(COMPILE_PWD)\" 
+	@${ECHO} -e $(COLOR_START)"COMPILING[bisheng_fst_online][Target:'$@', Using:'$<'] successfully."${COLOR_END}
+
+clean:
+	-@$(RM) -rf $(BUILD_DIR)
+	-@$(RM) -rf $(LIB_BASE_DIR)/*/*.o
+	@${ECHO} -e $(COLOR_START)"[make bisheng_fst_online clean done]"${COLOR_END}
+
