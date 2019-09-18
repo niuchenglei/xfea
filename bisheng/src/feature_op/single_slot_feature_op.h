@@ -16,7 +16,7 @@ public:
     virtual ReturnCode init(const ExtractorConfig& extractor_config) = 0;
 
     // 具体的产生特征的实现
-    virtual ReturnCode generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set) = 0;
+    virtual inline ReturnCode generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set, bool copy_value = true) = 0;
 
     // 资源回收
     virtual void finalize() {
@@ -25,10 +25,7 @@ public:
 
 protected:
     // 将提取的特征明文进行签名变换等操作，并将相关结果存入fea_result_set
-    virtual ReturnCode emit_feature(const char* fea_text, FeaResultSet& fea_result_set);
-
-    // 将提取的int32类型的特征明文进行签名变换等操作，并将相关结果存入fea_result_set
-    virtual ReturnCode emit_int32_feature(const int32_t fea_text, FeaResultSet& fea_result_set);
+    virtual ReturnCode emit_feature(const char* fea_text, FeaResultSet& fea_result_set, bool copy_value = true);
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

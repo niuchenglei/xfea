@@ -16,7 +16,7 @@ namespace {
 
 void output_fea_result_set(const FeaResultSet& fea_result_set) {
     uint32_t fea_result_num = fea_result_set.size();
-    // std::cout << "Instance result: " << std::endl;
+    std::cout << "[" << fea_result_num << "]";
     for (uint32_t i = 0; i < fea_result_num; ++i) {
          const fea_result_t* fea_result = fea_result_set.get_fea_result(i);
          if (NULL == fea_result) {
@@ -39,7 +39,7 @@ int run_fe_extract(const std::string& config_path, const std::string& input_file
         return -1;
     }
 
-    for (int i = 0; i < 20000; ++i) {
+    for (int i = 0; i < 100; ++i) {
         std::ostringstream oss1;
         // extractor清空内部Record和Result存储
         extractor.one_round_reset();
@@ -57,7 +57,7 @@ int run_fe_extract(const std::string& config_path, const std::string& input_file
         }
 
         std::ostringstream oss2;
-        oss2 << "custom_id_" << i;
+        oss2 << "custom_#id_" << i;
         ret = extractor.add_field_value(oss2.str(), 1);
         if (RC_ERROR == ret) {
             XFEA_BISHENG_FATAL_LOG("add record to index 1 occurs fatal error in lineno[%d]!", i);

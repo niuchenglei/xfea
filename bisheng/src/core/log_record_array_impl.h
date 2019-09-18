@@ -13,6 +13,7 @@ public:
         // 构造函数不要调用虚函数，所有不掉reset
         for (uint32_t i = 0; i < GlobalParameter::kMaxRecordFieldNum; ++i) {
             _value_buf[i][0] = '\0';
+            _value_buf_ptr[i] = NULL;
             _is_set[i] = false;
         }
     }
@@ -21,12 +22,8 @@ public:
     virtual ReturnCode init(ExtractorConfig* extractor_config);
 
     // 填充字段值
-    virtual ReturnCode fill_value(const char* value, const int field_index);
-    virtual ReturnCode fill_value(const char* value, const std::string& field_name);
-
-    // 更新字段值, 一般是预处理类使用
-    virtual ReturnCode update_value(const char* value, const int field_index);
-    virtual ReturnCode update_value(const char* value, const std::string& field_name);
+    virtual ReturnCode fill_value(const char* value, const int field_index, bool copy_value = true);
+    virtual ReturnCode fill_value(const char* value, const std::string& field_name, bool copy_value = true);
 
     // 清空存储的内容，供后续再次使用该类
     virtual void reset();
@@ -38,10 +35,6 @@ public:
     virtual const char* get_value(const int field_index) const;
     virtual const char* get_value(const std::string& field_name) const;
 
-    // 获取字段值及该该字段值的最大存储空间(字节)
-    virtual const char* get_value(const int field_index, uint32_t& max_value_capacity) const;
-    virtual const char* get_value(const std::string& field_name, uint32_t& max_value_capacity) const;
-
     // 返回已填充的字段个数
     virtual uint32_t size() const {
         return _already_filled_field_num;
@@ -51,14 +44,16 @@ public:
     virtual void finalize();
 
 private:
-    std::string _tag_name;                                                                            // 区分不同的特征提取场景
+    std::string _tag_name;   // 区分不同的特征提取场景
+    const char* _value_buf_ptr[GlobalParameter::kMaxRecordFieldNum];
     char _value_buf[GlobalParameter::kMaxRecordFieldNum][GlobalParameter::kMaxRecordFieldValueSize];  // 存储存储的多个字段
     bool _is_set[GlobalParameter::kMaxRecordFieldNum];                                                // 标识字段是否被填充
     uint32_t _already_filled_field_num;                                                               // 已经填充的字段总数
     uint32_t _expected_field_num;                                                                     // 期望填充的字段总数
     ExtractorConfig* _extractor_config;                                                               // 存储特征提取引擎的所有配置的对象指针（外部传递赋值）
 
-    XFEA_BISHENG_DISALLOW_COPY_AND_ASSIGN(LogRecordArrayImpl);
+    LogRecordArrayImpl(const LogRecordArrayImpl&);
+    void operator=(const LogRecordArrayImpl&);
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

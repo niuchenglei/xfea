@@ -9,6 +9,9 @@
 
 #include <map>
 #include <string>
+#include <cstddef>
+#include <stdint.h>
+
 
 namespace xfea { namespace offxtractor {
 

@@ -26,26 +26,26 @@ ReturnCode LogRecordArrayImpl::init(ExtractorConfig* extractor_config) {
 }
 
 // 填充字段值
-ReturnCode LogRecordArrayImpl::fill_value(const char* value, const int field_index) {
+ReturnCode LogRecordArrayImpl::fill_value(const char* value, const int field_index, bool copy_value) {
     if (NULL == value) {
         XFEA_BISHENG_FATAL_LOG("[%s] input param value is NULL in LogRecordArrayImpl::fill_value!",  _tag_name.c_str());
         return RC_ERROR;
     }
 
     // 检查field_index是否越界
-    if (field_index < 0 || static_cast<uint32_t>(field_index) >= _expected_field_num) {
+    if (field_index < 0 || field_index >= _expected_field_num) {
         XFEA_BISHENG_FATAL_LOG("[%s] field_index[%d] exceeds bound [0, %u)!", _tag_name.c_str(), field_index, _expected_field_num);
         return RC_ERROR;
     }
-    if (_is_set[field_index]) {
-        XFEA_BISHENG_WARN_LOG("[%s] field_index[%d] is already set!", _tag_name.c_str(), field_index);
-        // 不退出，继续后续处理
-    }
 
-    int wn = snprintf(_value_buf[field_index], GlobalParameter::kMaxRecordFieldValueSize, "%s", value);
-    if (wn < 0 || static_cast<uint32_t>(wn) >= GlobalParameter::kMaxRecordFieldValueSize) {
-        XFEA_BISHENG_WARN_LOG("[%s] write using snprintf failed, return code [%d]!", _tag_name.c_str(), wn);
-        return RC_WARNING;
+    if (copy_value) {
+        int wn = snprintf(_value_buf[field_index], GlobalParameter::kMaxRecordFieldValueSize, "%s", value);
+        if (wn < 0 || static_cast<uint32_t>(wn) >= GlobalParameter::kMaxRecordFieldValueSize) {
+            XFEA_BISHENG_WARN_LOG("[%s] write using snprintf failed, return code [%d]!", _tag_name.c_str(), wn);
+            return RC_WARNING;
+        }
+    } else {
+        _value_buf_ptr[field_index] = value;
     }
     if (!_is_set[field_index]) {
         _is_set[field_index] = true;
@@ -56,7 +56,7 @@ ReturnCode LogRecordArrayImpl::fill_value(const char* value, const int field_ind
 }
 
 // 填充字段值
-ReturnCode LogRecordArrayImpl::fill_value(const char* value, const std::string& field_name) {
+ReturnCode LogRecordArrayImpl::fill_value(const char* value, const std::string& field_name, bool copy_value) {
     int field_index = _extractor_config->key_to_index(field_name);
     if (field_index < 0) {
         XFEA_BISHENG_FATAL_LOG("[%s] can not find index of field_name[%s]!", _tag_name.c_str(), field_name.c_str());
@@ -65,7 +65,7 @@ ReturnCode LogRecordArrayImpl::fill_value(const char* value, const std::string& 
 
     return fill_value(value, field_index);
 }
-
+/*
 // 更新字段值, 一般是预处理类使用
 ReturnCode LogRecordArrayImpl::update_value(const char* value, const int field_index) {
     if (NULL == value) {
@@ -101,12 +101,13 @@ ReturnCode LogRecordArrayImpl::update_value(const char* value, const std::string
     }
 
     return update_value(value, field_index);
-}
+}*/
 
 // 清空存储的内容，供后续再次使用该类
 void LogRecordArrayImpl::reset() {
     for (uint32_t i = 0; i < GlobalParameter::kMaxRecordFieldNum; ++i) {
         _value_buf[i][0] = '\0';
+        _value_buf_ptr[i] = NULL;
         _is_set[i] = false;
     }
     _already_filled_field_num = 0;
@@ -130,19 +131,7 @@ bool LogRecordArrayImpl::is_valid() const {
 
 // 获取字段值
 const char* LogRecordArrayImpl::get_value(const int field_index) const {
-    uint32_t max_value_capacity = 0;
-    return get_value(field_index, max_value_capacity);
-}
-
-// 获取字段值
-const char* LogRecordArrayImpl::get_value(const std::string& field_name) const {
-    uint32_t max_value_capacity = 0;
-    return get_value(field_name, max_value_capacity);
-}
-
-// 获取字段值及该该字段值的最大存储空间(字节)
-const char* LogRecordArrayImpl::get_value(const int field_index, uint32_t& max_value_capacity) const {
-    if (field_index < 0 || static_cast<uint32_t>(field_index) >= _expected_field_num) {
+    if (field_index < 0 || field_index >= _expected_field_num) {
         XFEA_BISHENG_WARN_LOG("[%s] field_index[%d] exceeds bound [0, %u)!", _tag_name.c_str(), field_index, _expected_field_num);
         return NULL;
     }
@@ -151,19 +140,17 @@ const char* LogRecordArrayImpl::get_value(const int field_index, uint32_t& max_v
         return NULL;
     }
 
-    max_value_capacity = GlobalParameter::kMaxRecordFieldValueSize;
-    return _value_buf[field_index];
+    return (_value_buf_ptr[field_index] == NULL) ? _value_buf[field_index] : _value_buf_ptr[field_index];
 }
 
-// 获取字段值及该该字段值的最大存储空间(字节)
-const char* LogRecordArrayImpl::get_value(const std::string& field_name, uint32_t& max_value_capacity) const {
+const char* LogRecordArrayImpl::get_value(const std::string& field_name) const {
     int field_index = _extractor_config->key_to_index(field_name);
     if (field_index < 0) {
         XFEA_BISHENG_FATAL_LOG("[%s] can not find index of field_name[%s]!", _tag_name.c_str(), field_name.c_str());
         return NULL;
     }
 
-    return get_value(field_index, max_value_capacity);
+    return get_value(field_index);
 }
 
 // 回收资源

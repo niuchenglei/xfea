@@ -46,7 +46,7 @@ ReturnCode FeatureOpManager::init(ExtractorConfig* extractor_config) {
 }
 
 // 调用所有配置的特征类提取特征，并将结果存入FeaResultSet
-ReturnCode FeatureOpManager::extract_features(const LogRecordInterface& record, FeaResultSet& fea_result_set) {
+ReturnCode FeatureOpManager::extract_features(const LogRecordInterface& record, FeaResultSet& fea_result_set, bool copy_value) {
     std::vector<FeatureOpBase*>::iterator iter = _fea_op_vec.begin();
     // 调用每一个配置的特征类进行特征抽取; 如果某个op出现返回结果不为RC_SUCCESS，则停止执行本函数
     for (; iter != _fea_op_vec.end(); ++iter) {

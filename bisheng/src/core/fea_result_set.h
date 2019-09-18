@@ -6,24 +6,14 @@
 XFEA_BISHENG_NAMESPACE_GUARD_BEGIN
 
 // 单个特征结果的表示
-struct fea_result_t {
+class fea_result_t {
 public:
     fea_result_t(): fea_slot(0), is_hash(false), origin_fea_sign(0), final_fea_sign(0) {
         fea_text[0] = '\0';
     }
 
-    void debug_output() {
-        // TODO
-    }
- 
-    void init() {
-        // fea_text_capacity = sizeof(fea_text);  // TODO static
-        reset();
-    }
-
-    void reset() {
+    void inline reset() {
         fea_text[0] = '\0';
-        // fea_text_length = 0;
         fea_slot = 0;
         is_hash = false;
         origin_fea_sign = 0;
@@ -31,15 +21,14 @@ public:
     }
 
     char fea_text[GlobalParameter::kMaxFeaTextResultSize];         // 特征明文内容
-    // uint32_t fea_text_capacity;                                    // 存储特征明文空间的最大值
-    // uint32_t fea_text_length;                                   // 特征明文长度
     int32_t fea_slot;                                              // 所属特征类ID
     bool is_hash;                                                  // 是否需要hash
     uint64_t origin_fea_sign;                                      // 原始特征签名
     uint64_t final_fea_sign;                                       // 变换后的特征签名
 
 private:
-    XFEA_BISHENG_DISALLOW_COPY_AND_ASSIGN(fea_result_t);
+    fea_result_t(const fea_result_t&);
+    void operator=(const fea_result_t&);
 };
 
 // 单个样本的特征提取结果: 对fea_result_t数组的封装
@@ -57,9 +46,10 @@ public:
 
     // 清空样本
     void reset() {
-        for (uint32_t i = 0; i < (sizeof(_fea_result_array) / sizeof(_fea_result_array[0])); ++i) {
+        /*_fea_result_num = (_fea_result_num==0)?GlobalParameter::kMaxFeaResultNum:_fea_result_num;
+        for (uint32_t i = 0; i < _fea_result_num; i++) {
             _fea_result_array[i].reset();
-        }
+        }*/
         _fea_result_num = 0;
     }
 
@@ -86,16 +76,7 @@ public:
 
     // 填充一个特征明文为char*的特征提取结果
     ReturnCode fill_fea_result(const char* value, const int32_t fea_slot,
-            const bool is_hash, const uint64_t origin_fea_sign, const uint64_t final_fea_sign);
-
-    // 填充一个特征明文为char*类型特征提取结果, 不进行特征签名
-    ReturnCode fill_fea_result(const char* value, const int32_t fea_slot);
- 
-    // 填充一个特征明文为int32_t的特征提取结果
-    ReturnCode fill_int32_fea_result(const int32_t value, const int32_t fea_slot,
-            const bool is_hash, const uint64_t origin_fea_sign, const uint64_t final_fea_sign);
-    // 填充一个特征明文为int32_t类型特征提取结果, 不进行特征签名
-    ReturnCode fill_int32_fea_result(const int32_t value, const int32_t fea_slot);
+                               const bool is_hash = false, const uint64_t origin_fea_sign = 0, const uint64_t final_fea_sign = 0, bool copy_value = true);
 
     // 资源回收
     void finalize() {
@@ -106,7 +87,8 @@ private:
     fea_result_t _fea_result_array[GlobalParameter::kMaxFeaResultNum];  // 样本（特征的数组）
     uint32_t _fea_result_num;                                           // 样本中特征的个数
 
-    XFEA_BISHENG_DISALLOW_COPY_AND_ASSIGN(FeaResultSet);
+    FeaResultSet(const FeaResultSet&);
+    void operator=(const FeaResultSet&);
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

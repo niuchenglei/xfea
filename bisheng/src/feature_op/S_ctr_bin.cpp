@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
-
+#include <boost/lexical_cast.hpp>
 #include "util/bisheng_string_tool.h"
 
 XFEA_BISHENG_NAMESPACE_GUARD_BEGIN
@@ -109,11 +109,11 @@ int32_t S_ctr_bin::find_approximate_value(const std::vector<int32_t>& target_vec
 
     int64_t appromiate_value = target_vec[mid];
     if (mid > 0) {
-        if (std::abs(target_vec[mid - 1] - value) < std::abs(appromiate_value - value))
+        if (std::abs((float)(target_vec[mid - 1] - value)) < std::abs((float)(appromiate_value - value)))
             appromiate_value = target_vec[mid - 1];
     }
     if (mid < total_len - 1) {
-        if (std::abs(target_vec[mid + 1] - value) < std::abs(appromiate_value - value))
+        if (std::abs((float)(target_vec[mid + 1] - value)) < std::abs((float)(appromiate_value - value)))
             appromiate_value = target_vec[mid + 1];
     }
     return appromiate_value;
@@ -181,7 +181,7 @@ ReturnCode S_ctr_bin::init(const ExtractorConfig& extractor_config) {
     return RC_SUCCESS;
 }
 
-ReturnCode S_ctr_bin::generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set) {
+ReturnCode S_ctr_bin::generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set, bool copy_value) {
     // 获取抽取特征依赖的字段的index
     // 使用at有抛出异常的风险（init函数要做好_depend_col_index_vec size检查）
     int depend_col_field_index = _depend_col_index_vec.at(0);
@@ -194,9 +194,10 @@ ReturnCode S_ctr_bin::generate_fea(const LogRecordInterface& record, FeaResultSe
 
     // 如果找不到按照默认值-1来处理
     int32_t ctr_bin = find_ctr_map(fea_text);
+    std::string v = boost::lexical_cast<std::string>(ctr_bin);
 
     // 计算特征签名及将抽取的特征放入fea_result_set，emit_feature位于SingleSlotFeatureOp
-    return SingleSlotFeatureOp::emit_int32_feature(ctr_bin, fea_result_set);
+    return SingleSlotFeatureOp::emit_feature(v.c_str(), fea_result_set, copy_value);
 }
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

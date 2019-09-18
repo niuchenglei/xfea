@@ -21,7 +21,7 @@ public:
 
     // 调用所有配置的特征类提取特征，并将结果存入FeaResultSet
     // 注意：进行特征签名时，暂时未处理特征签名冲突的情况
-    virtual ReturnCode extract_features(const LogRecordInterface& record, FeaResultSet& fea_result_set);
+    virtual ReturnCode extract_features(const LogRecordInterface& record, FeaResultSet& fea_result_set, bool copy_value = true);
 
     // 回收资源：delete创建的特征类对象
     virtual void finalize();
@@ -34,7 +34,8 @@ private:
     ExtractorConfig* _extractor_config;           // 存储特征提取引擎的所有配置的对象指针（外部传递赋值）
     std::vector<FeatureOpBase*> _fea_op_vec;      // 存储创建好的特征类对象
 
-    XFEA_BISHENG_DISALLOW_COPY_AND_ASSIGN(FeatureOpManager);
+    FeatureOpManager(const FeatureOpManager&);
+    void operator=(const FeatureOpManager&);
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

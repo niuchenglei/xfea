@@ -3,6 +3,7 @@
 #include "feature_op/S_multi.h"
 #include "feature_op/S_bias.h"
 #include "feature_op/S_ctr_bin.h"
+#include "feature_op/S_combine.h"
 
 XFEA_BISHENG_NAMESPACE_GUARD_BEGIN
 
@@ -16,6 +17,7 @@ XFEA_BISHNEG_USING_FEATURE(S_direct);
 XFEA_BISHNEG_USING_FEATURE(S_multi);
 XFEA_BISHNEG_USING_FEATURE(S_bias);
 XFEA_BISHNEG_USING_FEATURE(S_ctr_bin);
+XFEA_BISHNEG_USING_FEATURE(S_combine);
 
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

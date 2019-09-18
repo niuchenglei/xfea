@@ -5,7 +5,7 @@ COLOR_END="\033[0m"
 
 CXX=g++
 RM=rm
-CXXFLAGS= -g -W -Wall -O2 -std=c++11
+CXXFLAGS= -g -W -Wall -O3 #-std=c++0x  # -std=c++11
 VERSION=$(shell git describe --tags | awk -F '-' '{ print $1"."$2;}' | tr -d 'v' )
 
 #DEPEND_INCPATH=-I../build/bisheng/include
@@ -16,7 +16,7 @@ BISHENG_LIBPATH=../../bisheng/build/bisheng/lib/libbisheng_offline.a
 BIN_NAME=extractor
 
 all: ./src/main.cpp ./src/ini.cpp ./src/ini_reader.cpp ./src/offline_extractor.cpp $(BISHENG_LIBPATH)
-	@$(CXX) $(CXXFLAGS) $^ $(DEPEND_INCPATH) -o $(BIN_NAME)
+	@$(CXX) $(CXXFLAGS) $^ $(DEPEND_INCPATH) -ldl -lm -lpthread -o $(BIN_NAME)
 	@${ECHO} -e $(COLOR_START)"[make all succ]"$(COLOR_END)
 
 

@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <boost/algorithm/string/trim.hpp>
 
 #include "common/bisheng_common.h"
 #include "util/bisheng_INIReader.h"
@@ -48,11 +49,13 @@ public:
     }
 
     int key_to_index(const std::string& field_schema_name) const {
-        std::map<std::string, int>::const_iterator iter = _input_schema_key_index_map.find(field_schema_name);
+        //std::string _a(field_schema_name);// = boost::trim(field_schema_name);
+        //boost::trim(_a);
+        std::map<std::string, int>::const_iterator iter = _input_schema_key_index_map.find(field_schema_name); //field_schema_name);
         if (iter != _input_schema_key_index_map.end()) {
-             return iter->second;
+            return iter->second;
         } else {
-             return -1;
+            return -1;
         }
     }
 
@@ -80,6 +83,10 @@ public:
         return _output_add_field_name_vec;
     }
 
+    std::string get_label_field() const {
+        return _label_field;
+    }
+
     std::string to_string() const;
 
     void finalize() {
@@ -103,6 +110,7 @@ private:
 
     // 全局配置
     std::string _tag_name;
+    std::string _label_field;
 
     // 输入schema相关的配置
     uint32_t _input_schema_size;
@@ -121,7 +129,8 @@ private:
     uint64_t _feature_global_hash_range_max;
     std::vector<fea_op_config_t> _feature_op_config_vec;    
 
-    XFEA_BISHENG_DISALLOW_COPY_AND_ASSIGN(ExtractorConfig);
+    ExtractorConfig(const ExtractorConfig&);
+    void operator=(const ExtractorConfig&);
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

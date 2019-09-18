@@ -94,7 +94,8 @@ public:
 private:
     std::map<std::string, OpFactory*> _op_factory_map;
 
-    XFEA_BISHENG_DISALLOW_COPY_AND_ASSIGN(TemplateOpFactoryManager);
+    TemplateOpFactoryManager(const TemplateOpFactoryManager&);
+    void operator=(const TemplateOpFactoryManager&);
 };
 
 class OpFactoryResiterT {
@@ -185,7 +186,8 @@ public:
 private:
     std::map<std::string, OpFactoryManager*> _op_factory_manager_map;
 
-    XFEA_BISHENG_DISALLOW_COPY_AND_ASSIGN(ComponentManager);
+    ComponentManager(const ComponentManager&);
+    void operator=(const ComponentManager&);
 };
 
 class OpFactoryManagerResiterT {

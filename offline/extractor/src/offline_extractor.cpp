@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include "stdlib.h"
+#include <boost/lexical_cast.hpp>
 
 #include "offline_extractor.h"
 #include "util.h"
@@ -26,7 +27,7 @@ int OfflineExtractor::Init(const string& config_path, const string& input_schema
     }
     std::vector<std::string> items;
     ADutil::Split2(items, input_schema, ',');
-    std::unordered_map<std::string, int> input_schema_m;
+    boost::unordered_map<std::string, int> input_schema_m;
     for(int i = 0; i < int(items.size()); ++ i) {
         input_schema_m[items[i]] = i;
     }
@@ -88,8 +89,16 @@ int OfflineExtractor::Map(const string &line, const int delimiter) {
         ADutil::Split2(items, line, ' '); //' '
     } else if(delimiter == Delimiter::CTRLA_DELIMITER) {
         ADutil::Split2(items, line, '\x01'); //'\x01'
-    }
+    } else if(delimiter == Delimiter::CTRLB_DELIMITER) {
+        ADutil::Split2(items, line, '\x02'); //'\x01'
+    } else if(delimiter == Delimiter::CTRLC_DELIMITER) {
+        ADutil::Split2(items, line, '\x03'); //'\x01'
+    } else if(delimiter == Delimiter::CTRLI_DELIMITER) {
+        ADutil::Split2(items, line, '\x09'); //'\x01'
+    }  
+
     std::string label("");
+    std::string label_field = _xtractor.get_label_field();
 
     //如果hive表的schema不一致，遍历bisheng的schema, 通过特征名拿到hive表相应列的字段。
     //请注意：字段名字顺序可以不一致，但是名字命名要一致，比如bisheng的schema把微博id叫mid，hive表的schema的微博id也应该叫mid
@@ -113,7 +122,7 @@ int OfflineExtractor::Map(const string &line, const int delimiter) {
                     std::cerr << "add fea " << bisheng_fea_name << " occurs warn error!" << std::endl;
                     continue;
                 }
-                if(bisheng_fea_name.compare("label") == 0) {
+                if(bisheng_fea_name.compare(label_field) == 0) {
                     label.assign(items[column_index]);
                 }
             } else {
@@ -129,8 +138,9 @@ int OfflineExtractor::Map(const string &line, const int delimiter) {
             return -1;
         }
         for(int i = 0; i < int(bisheng_schema.size()); ++i) {
-            if (0 == i) {
-                label.assign(items[0]);
+            std::map<std::string, int>::const_iterator _iter = bisheng_schema.find(label_field);
+            if (_iter != bisheng_schema.end() && _iter->second == i) {
+                label.assign(items[i]);
             }
             // std::string bisheng_fea_name(Iter->first);
             ReturnCode ret = _xtractor.add_field_value(items[i], i);
@@ -221,7 +231,7 @@ void OfflineExtractor::ReduceHebe() {
             }
             std::map<uint64_t, int>::iterator it;
             for(it = m_sort.begin(); it != m_sort.end(); ++ it) {
-                out_str.append(std::to_string(it->first)).append(":1 ");
+                out_str.append(boost::lexical_cast<std::string>(it->first)).append(":1 ");
             }
             out_str = ADutil::Trim(out_str);
             out_str.append("\tinstance");

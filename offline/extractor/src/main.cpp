@@ -53,7 +53,13 @@ int run(int argc, char** argv) {
         delimiter = Delimiter::SPACE_DELIMITER;
     } else if (delimiter_str.compare("'\\x01'") == 0) {
         delimiter = Delimiter::CTRLA_DELIMITER;
-    } else {
+    } else if (delimiter_str.compare("'\\x02'") == 0) {
+        delimiter = Delimiter::CTRLB_DELIMITER;
+    } else if (delimiter_str.compare("'\\x03'") == 0) {
+        delimiter = Delimiter::CTRLC_DELIMITER;
+    } else if (delimiter_str.compare("'\\x09'") == 0) {
+        delimiter = Delimiter::CTRLI_DELIMITER;
+    }else {
         std::cerr << "delimiter: " << delimiter_str << " is not recognized" << endl;
         return -1;
     }

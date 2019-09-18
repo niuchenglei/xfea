@@ -1,15 +1,19 @@
-#ifndef XFEA_BISHENG_FEATURE_OP_S_BIAS_H_
-#define XFEA_BISHENG_FEATURE_OP_S_BIAS_H_
+#ifndef XFEA_BISHENG_FEATURE_OP_S_DIRECT_COMBINE_H_
+#define XFEA_BISHENG_FEATURE_OP_S_DIRECT_COMBINE_H_
 
 #include "feature_op/single_slot_feature_op.h"
 
 XFEA_BISHENG_NAMESPACE_GUARD_BEGIN
 
-// 根据单个字段的内容直接生产特征
-class S_bias : public SingleSlotFeatureOp {
+// 拼接多个字段的内容直接生产特征
+class S_combine : public SingleSlotFeatureOp {
 public:
-    S_bias() {
-        // Nothing to do
+    const static int kBufSize = 2048;
+    const static char kDefaultSeperator = '_';
+
+public:
+    S_combine(): _seperator(kDefaultSeperator) {
+        _buf[0] = '\0';
     }
 
     // 初始化及参数检查, 需要依赖的字段个数必须为1
@@ -22,6 +26,10 @@ public:
     virtual void finalize() {
         // Nothing to do
     }
+
+private:
+    char _seperator;
+    char _buf[kBufSize];
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

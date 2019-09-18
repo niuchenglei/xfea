@@ -3,6 +3,10 @@ package fea;
 import java.util.Arrays;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.lib.MultipleTextOutputFormat;
+import java.lang.String;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 public class FeaMultipleOutputFormat extends MultipleTextOutputFormat<Text, Text> {
 
@@ -27,6 +31,7 @@ public class FeaMultipleOutputFormat extends MultipleTextOutputFormat<Text, Text
             outputName = name+"-"+flag;
         }
         */
+
         outputName=parts[parts.length - 1] + "/" + name;
         return outputName;
     }
@@ -41,7 +46,7 @@ public class FeaMultipleOutputFormat extends MultipleTextOutputFormat<Text, Text
     protected Text generateActualValue(Text key, Text value) {
         String strValue = value.toString();
         String[] parts=strValue.split("\t");
-        String r_parts = String.join("\t", Arrays.copyOf(parts, parts.length-1));
+        String r_parts = StringUtils.join(Arrays.copyOf(parts, parts.length-1), "\t");
         return new Text(r_parts);
     }
 }

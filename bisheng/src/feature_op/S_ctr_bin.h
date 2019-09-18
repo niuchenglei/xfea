@@ -20,7 +20,7 @@ public:
     virtual ReturnCode init(const ExtractorConfig& extractor_config);
 
     // 根据单个字段的内容直接生产特征
-    virtual ReturnCode generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set);
+    virtual ReturnCode generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set, bool copy_value = true);
 
     // 资源回收
     virtual void finalize() {

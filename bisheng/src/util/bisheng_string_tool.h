@@ -14,6 +14,8 @@ public:
 
     static int get_var_value(const std::string& src_str, const std::string& var_name, std::string& value);
 
+    static void Split2(std::vector<std::string>& vs, const std::string& line, char dmt);
+
     static int tokenize(const std::string& src, const std::string& tok, std::vector<std::string>& tokens);
 
     static int StringToUint64(const std::string& input_str, uint64_t& return_value);

@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "ini.h"
 #include "ini_reader.h"

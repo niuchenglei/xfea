@@ -47,13 +47,6 @@
 
 #endif
 
-#define XFEA_BISHENG_DISALLOW_COPY_AND_ASSIGN(TypeName) \
-    TypeName(const TypeName&); \
-    void operator=(const TypeName&);
-
-// 避免出现unused-parameter warning
-#define XFEA_BISHENG_UNUSED_VAR(x) (void)(x);
-
 XFEA_BISHENG_NAMESPACE_GUARD_BEGIN
 
 enum ReturnCode {
@@ -64,10 +57,10 @@ enum ReturnCode {
 
 class GlobalParameter {
 public:
-    static const uint32_t kMaxRecordFieldNum = 256;            // Record的最大存储字段数
-    static const uint32_t kMaxRecordFieldValueSize = 256;      // Record的单个字段最大存储空间(含'\0'
-    static const uint32_t kMaxFeaTextResultSize = 256;         // Record的单个字段最大存储空间(含'\0'
-    static const uint32_t kMaxFeaResultNum = 256;              // Record的单个字段最大存储空间(含'\0'
+    static const uint32_t kMaxRecordFieldNum = 1024;           // Record的最大存储字段数
+    static const uint32_t kMaxRecordFieldValueSize = 2048;     // Record的单个字段最大存储空间(含'\0'
+    static const uint32_t kMaxFeaResultNum = 8192;             // Result最大数量（最多产生X个特征）
+    static const uint32_t kMaxFeaTextResultSize = 64;          // Result的单个字段最大存储（处理后特征值长度）
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

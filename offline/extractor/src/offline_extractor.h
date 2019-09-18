@@ -2,9 +2,10 @@
 #define __XFEA_OFFLINE_FEA_H_ 
 
 #include <string>
-#include <unordered_map>
+#include <boost/unordered_map.hpp>
 #include "core/extractor.h"
 #include "common/bisheng_common.h"
+
 
 using namespace std;
 using xfea::bisheng::FeaResultSet;
@@ -21,6 +22,9 @@ public:
     static const int TAB_DELIMITER = 1;
     static const int SPACE_DELIMITER = 2;
     static const int CTRLA_DELIMITER = 3;
+    static const int CTRLB_DELIMITER = 4;
+    static const int CTRLC_DELIMITER = 5;
+    static const int CTRLI_DELIMITER = 6;
 };
 class OfflineExtractor {
     public:
@@ -37,7 +41,7 @@ class OfflineExtractor {
         void ReduceMerge(const std::string& filter_in);
         void ReduceHebe();
         xfea::bisheng::Extractor _xtractor;
-        std::unordered_map<int, int> _schema_index_m;
+        boost::unordered_map<int, int> _schema_index_m;
 };
 
 }}

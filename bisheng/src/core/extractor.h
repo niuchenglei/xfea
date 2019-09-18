@@ -36,6 +36,10 @@ public:
         _record->reset(); 
         _fea_result_set->reset();
     }
+    // 只清空结果，输入特征不进行处理，在线上使用更快
+    void just_result_reset() {
+        _fea_result_set->reset();
+    }
  
     // 获取封住输入内容的Record
     const LogRecordInterface& get_record() const {
@@ -43,28 +47,28 @@ public:
     }
 
     // 填充字段值,离线使用
-    ReturnCode add_field_value(const std::string& value, const int field_index) {
-        return _record->fill_value(value.c_str(), field_index);
+    ReturnCode add_field_value(const std::string& value, const int field_index, bool copy_value = true) {
+        return _record->fill_value(value.c_str(), field_index, copy_value);
     }
 
     // 填充字段值,离线使用
-    ReturnCode add_field_value(const char* value, const int field_index) {
-        return _record->fill_value(value, field_index);
+    ReturnCode add_field_value(const char* value, const int field_index, bool copy_value = true) {
+        return _record->fill_value(value, field_index, copy_value);
     }
 
     // 填充字段值,在线使用
-    ReturnCode add_field_value(const std::string& value, const std::string& field_name) {
-        return _record->fill_value(value.c_str(), field_name);
+    ReturnCode add_field_value(const std::string& value, const std::string& field_name, bool copy_value = true) {
+        return _record->fill_value(value.c_str(), field_name, copy_value);
     }
 
     // 填充字段值,在线使用
-    ReturnCode add_field_value(const char* value, const std::string& field_name) {
-        return _record->fill_value(value, field_name);
+    ReturnCode add_field_value(const char* value, const std::string& field_name, bool copy_value = true) {
+        return _record->fill_value(value, field_name, copy_value);
     }
 
     // 进行特征抽取（单条样本）
     // 注意：进行特征签名时，暂时未处理特征签名冲突的情况
-    ReturnCode extract_features_from_record(); 
+    ReturnCode extract_features_from_record(bool copy_value = true); 
 
     // 获取特征抽取的结果（单条样本）
     const FeaResultSet& get_fea_result_set() const {
@@ -81,6 +85,10 @@ public:
         return _extractor_config->get_output_add_field_name_vec();
     }
 
+    std::string get_label_field() const {
+        return _extractor_config->get_label_field();
+    }
+
     // 回收资源（只调用一次）
     void finalize();
 
@@ -90,7 +98,8 @@ private:
     FeaResultSet* _fea_result_set;             // 封装特征提取结果（单条样本）
     FeatureOpManager* _feature_op_manager;     // 特征管理类，调用管理的特征类进行具体的特征提取
 
-    XFEA_BISHENG_DISALLOW_COPY_AND_ASSIGN(Extractor);
+    Extractor(const Extractor&);
+    void operator=(const Extractor&);
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

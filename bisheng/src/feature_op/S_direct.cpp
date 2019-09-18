@@ -12,9 +12,6 @@ XFEA_BISHENG_NAMESPACE_GUARD_BEGIN
 
 // 初始化及参数检查, 需要依赖的字段个数必须为1
 ReturnCode S_direct::init(const ExtractorConfig& extractor_config) {
-    // 避免出现unused-parameter warning
-    XFEA_BISHENG_UNUSED_VAR(extractor_config);
-
     // 依赖的字段个数必须为1
     if (_depend_col_index_vec.size() != 1) {
         XFEA_BISHENG_FATAL_LOG("depend field number must be equal to 1 in feature [%s]!", _name.c_str());
@@ -43,7 +40,7 @@ ReturnCode S_direct::init(const ExtractorConfig& extractor_config) {
 }
 
 // 根据单个字段的内容直接生产特征
-ReturnCode S_direct::generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set) {
+ReturnCode S_direct::generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set, bool copy_value) {
     float rnd = ((double)rand()) / RAND_MAX;
     if (_output_ratio > 1.0) {
         if (rnd > (_output_ratio-1.0))
@@ -59,7 +56,7 @@ ReturnCode S_direct::generate_fea(const LogRecordInterface& record, FeaResultSet
             return RC_WARNING;
         }
         // 计算特征签名及将抽取的特征放入fea_result_set，emit_feature位于SingleSlotFeatureOp
-        return SingleSlotFeatureOp::emit_feature(fea_text, fea_result_set);
+        return SingleSlotFeatureOp::emit_feature(fea_text, fea_result_set, copy_value);
     }
 
     if (_arg_str.size() >= 1 && (rnd > _output_ratio)) {  // 采样
@@ -75,7 +72,7 @@ ReturnCode S_direct::generate_fea(const LogRecordInterface& record, FeaResultSet
         return RC_WARNING;
     }
     // 计算特征签名及将抽取的特征放入fea_result_set，emit_feature位于SingleSlotFeatureOp
-    return SingleSlotFeatureOp::emit_feature(fea_text, fea_result_set);
+    return SingleSlotFeatureOp::emit_feature(fea_text, fea_result_set, copy_value);
 }
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

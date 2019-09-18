@@ -6,7 +6,7 @@ COLOR_END="\033[0m"
 CXX=g++
 RM=rm
 ##CXXFLAGS= -g -W -Wall -O2 -std=c++11
-CXXFLAGS= -w -O2 -W -Wall -fPIC
+CXXFLAGS= -w -O3 -W -Wall -fPIC
 CUR_VERSION=$(shell git describe --always)
 COMPILE_HOSTNAME=$(shell hostname)
 COMPILE_PWD=$(shell pwd)

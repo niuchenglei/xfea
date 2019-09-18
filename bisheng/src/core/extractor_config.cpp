@@ -268,6 +268,14 @@ ReturnCode ExtractorConfig::load_feature_list(const std::string& feature_list_fi
     while (getline(feature_conf_file, line)) {
         // 讨论：可以直接返回vector中的，这样可以减少一次拷贝
         fea_op_config_t fea_op_config;
+
+        StringTool::trim(line);
+        if (strlen(line.c_str()) <= 10)
+            continue;
+        if (line == "" || line == "\n")
+            continue;
+	if (line[0] == '#' || line[0] == '\n')
+            continue;
         if (parse_feature_conf_line(line, _exist_slot_set, fea_op_config) != RC_SUCCESS) {
             XFEA_BISHENG_FATAL_LOG("parse feature item line[%s] error!", line.c_str());
             feature_conf_file.close();
@@ -300,6 +308,9 @@ ReturnCode ExtractorConfig::load_config(const std::string& config_file_path, con
         XFEA_BISHENG_FATAL_LOG("parse_input_schema [%s] failed!", input_schema_str_buf.c_str());
         return RC_ERROR;
     }
+
+    _label_field = "label";
+    _config_reader.Get("", "label", _label_field, "label");
 
     // 加载_output_add_field_name
     std::string output_add_field_str_buf = "";

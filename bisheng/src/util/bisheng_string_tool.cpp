@@ -34,7 +34,20 @@ int StringTool::get_var_value(const std::string& src_str, const std::string& var
     value = str_vec[1];
     return 0;
 }
-
+void StringTool::Split2(std::vector<std::string>& vs, const std::string& line, char dmt) {  
+    if (line.empty()) 
+        return;
+    std::string::size_type p = 0;
+    std::string::size_type q;
+    vs.clear();
+    for (;;) {
+      q = line.find(dmt, p);
+      std::string str = line.substr(p, q - p);
+      vs.push_back(str);
+      if (q == std::string::npos) break;
+      p = q + 1;
+    }
+}
 int StringTool::tokenize(const std::string& src, const std::string& tok, std::vector<std::string>& tokens) {
     if (src.empty() || tok.empty()) {
         return -1;

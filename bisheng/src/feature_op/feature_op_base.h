@@ -21,7 +21,7 @@ public:
 
     // 具体的产生特征的实现
     // 讨论:第一个参数可以考虑更加直观的方式,而不是使用LogRecordInterface
-    virtual ReturnCode generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set) = 0;
+    virtual ReturnCode generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set, bool copy_value = true) = 0;
 
     // 资源回收
     virtual void finalize() {
@@ -44,6 +44,9 @@ public:
         _is_need_hash = fea_op_config.is_need_hash;
         _hash_range_min = fea_op_config.hash_range_min;
         _hash_range_max = fea_op_config.hash_range_max;
+        if (_hash_range_min < _hash_range_max)
+          _hash_range_min = _hash_range_max;
+        _hash_range = _hash_range_max - _hash_range_min;
     }
 
     // not virtual
@@ -63,13 +66,9 @@ public:
         _slot = slot;
     }
 
-
 protected:
     // 将提取的特征明文进行签名变换等操作，并将相关结果存入fea_result_set
-    virtual ReturnCode emit_feature(const char* fea_text, FeaResultSet& fea_result_set) = 0;
-
-    // 将提取的int32类型的特征明文进行签名变换等操作，并将相关结果存入fea_result_set
-    virtual ReturnCode emit_int32_feature(const int32_t fea_text, FeaResultSet& fea_result_set) = 0;
+    virtual ReturnCode emit_feature(const char* fea_text, FeaResultSet& fea_result_set, bool copy_value = true) = 0;
 
 protected:
     // 讨论：目前变量定义成protected，方便子类操作，更好的方式是提供get接口
@@ -82,6 +81,7 @@ protected:
     bool _is_need_hash;                                // 是否对特征明文签名
     uint64_t _hash_range_min;                          // 特征签名变换的最小值（包含）
     uint64_t _hash_range_max;                          // 特征签名变换的最大值（不包含）
+    uint64_t _hash_range;
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

@@ -57,7 +57,8 @@ private:
 private:
     std::map<std::string, std::string> _values;         // 存储原始配置项内容
 
-    XFEA_BISHENG_DISALLOW_COPY_AND_ASSIGN(INIReader);
+    INIReader(const INIReader&);
+    void operator=(const INIReader&);
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END
