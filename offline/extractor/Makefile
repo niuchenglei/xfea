@@ -19,6 +19,9 @@ all: ./src/main.cpp ./src/ini.cpp ./src/ini_reader.cpp ./src/offline_extractor.c
 	@$(CXX) $(CXXFLAGS) $^ $(DEPEND_INCPATH) -ldl -lm -lpthread -o $(BIN_NAME)
 	@${ECHO} -e $(COLOR_START)"[make all succ]"$(COLOR_END)
 
+test: ./src/test.cpp  $(BISHENG_LIBPATH)
+	@$(CXX) $(CXXFLAGS) $^ $(DEPEND_INCPATH) -ldl -lm -lpthread -lrt -o test
+	@${ECHO} -e $(COLOR_START)"[make all succ]"$(COLOR_END)
 
 clean:
 	-@$(RM) -rf *.o $(BIN_NAME)

@@ -23,8 +23,12 @@ ReturnCode S_combine::init(const ExtractorConfig& extractor_config) {
 ReturnCode S_combine::generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set, bool copy_value) {
     const char* field = NULL;
     int wn = 0;
+    bool update_flag = false;
     std::vector<int>::const_iterator iter = _depend_col_index_vec.begin();
     for (; iter != _depend_col_index_vec.end(); ++iter) {
+
+        update_flag |= record.is_update(*iter);
+
         field = record.get_value(*iter);
         if (NULL == field) {
             XFEA_BISHENG_WARN_LOG("get index[%d] value of record failed in feature [%s]!", *iter, _name.c_str());
@@ -40,8 +44,11 @@ ReturnCode S_combine::generate_fea(const LogRecordInterface& record, FeaResultSe
     // 去除for循环中多写的一个分隔符
     _buf[--wn] = '\0'; 
 
+    if (!update_flag)
+        return RC_SUCCESS;
+
     // 计算特征签名及将抽取的特征放入fea_result_set，emit_feature位于SingleSlotFeatureOp
-    return SingleSlotFeatureOp::emit_feature(_buf, fea_result_set, copy_value);
+    return SingleSlotFeatureOp::emit_feature(_name, 0, _buf, fea_result_set, copy_value);
 }
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

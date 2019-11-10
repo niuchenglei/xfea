@@ -15,16 +15,18 @@ public:
     // 填充字段值
     virtual ReturnCode fill_value(const char* value, const int field_index, bool copy_value = true) = 0;
     virtual ReturnCode fill_value(const char* value, const std::string& field_name, bool copy_value = true) = 0;
-
+    
     // 更新字段值, 一般是预处理类使用
     //virtual ReturnCode update_value(const char* value, const int field_index) = 0;
     //virtual ReturnCode update_value(const char* value, const std::string& field_name) = 0;
 
     // 清空存储的内容，供后续再次使用该类
     virtual void reset() = 0;
+    virtual void set_update(bool flag) = 0;
 
     // 检查是否可供特征提取使用（是否所有的字段都已填充值)
     virtual bool is_valid() const = 0;
+    virtual bool is_update(const int field_index) const = 0;
 
     // 获取字段值
     virtual const char* get_value(const int field_index) const = 0;

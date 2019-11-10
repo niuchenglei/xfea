@@ -1,5 +1,6 @@
 #include "util/bisheng_factory.h"
 #include "feature_op/S_direct.h"
+#include "feature_op/S_direct_p.h"
 #include "feature_op/S_multi.h"
 #include "feature_op/S_bias.h"
 #include "feature_op/S_ctr_bin.h"
@@ -14,6 +15,7 @@ XFEA_BISHNEG_USING_FACTORY_MANAGER(FEATURE);
 
 // TODO 注册特征类，在S_direct.cpp中注册不生效
 XFEA_BISHNEG_USING_FEATURE(S_direct);
+XFEA_BISHNEG_USING_FEATURE(S_direct_p);
 XFEA_BISHNEG_USING_FEATURE(S_multi);
 XFEA_BISHNEG_USING_FEATURE(S_bias);
 XFEA_BISHNEG_USING_FEATURE(S_ctr_bin);

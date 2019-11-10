@@ -17,6 +17,7 @@ XFEA_BISHENG_NAMESPACE_GUARD_BEGIN
 //      3) 调用extract_features_from_record进行具体的特征提取
 //      4) 调用get_fea_result_set获取特征提取结果
 //   4. 调用finalize回收相关资源，整个过程结束
+
 class Extractor {
 public:
     // 打印bisheng版本和编译信息

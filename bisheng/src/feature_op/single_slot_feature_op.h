@@ -25,7 +25,7 @@ public:
 
 protected:
     // 将提取的特征明文进行签名变换等操作，并将相关结果存入fea_result_set
-    virtual ReturnCode emit_feature(const char* fea_text, FeaResultSet& fea_result_set, bool copy_value = true);
+    virtual ReturnCode emit_feature(const std::string& name, const int idx, const char* fea_text, FeaResultSet& fea_result_set, bool copy_value = true);
 };
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

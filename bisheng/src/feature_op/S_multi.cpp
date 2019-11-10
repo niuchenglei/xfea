@@ -35,12 +35,19 @@ ReturnCode S_multi::generate_fea(const LogRecordInterface& record, FeaResultSet&
         return RC_WARNING;
     }
 
+    if (!record.is_update(depend_col_field_index))
+        return RC_SUCCESS;
+
     string value = string(fea_text);
     vector<string> array;
     StringTool::Split2(array, value, delim);
     ReturnCode ret = RC_SUCCESS;
+    int kk = 0;
     for (int k=0; k<array.size(); k++) {
-        ret = SingleSlotFeatureOp::emit_feature(array[k].c_str(), fea_result_set, copy_value);
+        if (strlen(array[k].c_str()) < 1)
+            continue;
+        ret = SingleSlotFeatureOp::emit_feature(_name, kk, array[k].c_str(), fea_result_set, copy_value);
+        kk += 1;
 
         if (ret != RC_SUCCESS)
             break;

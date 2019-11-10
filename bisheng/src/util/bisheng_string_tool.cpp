@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <boost/algorithm/string/trim.hpp>
 
 XFEA_BISHENG_NAMESPACE_GUARD_BEGIN
 
@@ -60,7 +61,7 @@ int StringTool::tokenize(const std::string& src, const std::string& tok, std::ve
     while ((index = src.find_first_of(tok, pre_index)) != std::string::npos) {
         if ((len = index - pre_index) != 0) {
             tmp_str = src.substr(pre_index, len);
-            trim(tmp_str);
+            boost::trim(tmp_str);            
             tokens.push_back(tmp_str);
         } else {
             XFEA_BISHENG_FATAL_LOG("find empty token in StringTool::tokenize!");
@@ -69,7 +70,7 @@ int StringTool::tokenize(const std::string& src, const std::string& tok, std::ve
         pre_index = index + 1;
     }
     std::string endstr = src.substr(pre_index);
-    trim(endstr);
+    boost::trim(endstr);
     if (endstr.empty()) {
         XFEA_BISHENG_FATAL_LOG("find empty token in StringTool::tokenize!");
         return -1;

@@ -40,10 +40,10 @@ ReturnCode LogRecordArrayImpl::fill_value(const char* value, const int field_ind
 
     if (copy_value) {
         int wn = snprintf(_value_buf[field_index], GlobalParameter::kMaxRecordFieldValueSize, "%s", value);
-        if (wn < 0 || static_cast<uint32_t>(wn) >= GlobalParameter::kMaxRecordFieldValueSize) {
+        /*if (wn < 0 || wn >= GlobalParameter::kMaxRecordFieldValueSize) {
             XFEA_BISHENG_WARN_LOG("[%s] write using snprintf failed, return code [%d]!", _tag_name.c_str(), wn);
             return RC_WARNING;
-        }
+        }*/
     } else {
         _value_buf_ptr[field_index] = value;
     }
@@ -51,6 +51,7 @@ ReturnCode LogRecordArrayImpl::fill_value(const char* value, const int field_ind
         _is_set[field_index] = true;
         ++_already_filled_field_num;
     }
+    _is_update[field_index] = true;
 
     return RC_SUCCESS;
 }
@@ -109,8 +110,15 @@ void LogRecordArrayImpl::reset() {
         _value_buf[i][0] = '\0';
         _value_buf_ptr[i] = NULL;
         _is_set[i] = false;
+        _is_update[i] = false;
     }
     _already_filled_field_num = 0;
+}
+
+void LogRecordArrayImpl::set_update(bool flag) {
+    for (uint32_t i = 0; i < GlobalParameter::kMaxRecordFieldNum; ++i) {
+        _is_update[i] = flag;
+    }
 }
 
 // 检查是否可供特征提取使用（是否所有的字段都已填充值)

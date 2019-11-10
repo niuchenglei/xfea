@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <cstdio>
-
+#include <string.h>
 
 #define XFEA_BISHENG_NAMESPACE_GUARD_BEGIN \
     namespace xfea {\
@@ -43,6 +43,9 @@
     do { \
         fprintf(stderr, "[%s][%s@%s][%d] " format "\n", \
             "ERROR", __func__, __FILE__, __LINE__, ##__VA_ARGS__); \
+        snprintf(__xfea_msg+__xfea_msg_len, 65536, "\t\t\t[%s][%s@%s][%d] " format "\n", \
+            "ERROR", __func__, __FILE__, __LINE__, ##__VA_ARGS__); \
+        __xfea_msg_len = strlen(__xfea_msg); \
     } while (0)
 
 #endif
@@ -55,10 +58,14 @@ enum ReturnCode {
     RC_ERROR   = -2   // 执行失败，不可接受错误
 };
 
+extern char __xfea_msg[65536];
+extern int __xfea_msg_len;
+extern const char* xfea_error_msg();
+
 class GlobalParameter {
 public:
-    static const uint32_t kMaxRecordFieldNum = 1024;           // Record的最大存储字段数
-    static const uint32_t kMaxRecordFieldValueSize = 2048;     // Record的单个字段最大存储空间(含'\0'
+    static const uint32_t kMaxRecordFieldNum = 256;            // Record的最大存储字段数
+    static const uint32_t kMaxRecordFieldValueSize = 8192;     // Record的单个字段最大存储空间(含'\0'
     static const uint32_t kMaxFeaResultNum = 8192;             // Result最大数量（最多产生X个特征）
     static const uint32_t kMaxFeaTextResultSize = 64;          // Result的单个字段最大存储（处理后特征值长度）
 };

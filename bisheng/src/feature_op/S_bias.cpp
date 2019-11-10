@@ -16,7 +16,12 @@ ReturnCode S_bias::init(const ExtractorConfig& extractor_config) {
 // 根据单个字段的内容直接生产特征
 ReturnCode S_bias::generate_fea(const LogRecordInterface& record, FeaResultSet& fea_result_set, bool copy_value) {
     // 计算特征签名及将抽取的特征放入fea_result_set，emit_feature位于SingleSlotFeatureOp
-    return SingleSlotFeatureOp::emit_feature(bias, fea_result_set, copy_value);
+    int depend_col_field_index = _depend_col_index_vec.at(0);
+
+    if (!record.is_update(depend_col_field_index))
+        return RC_SUCCESS;
+      
+    return SingleSlotFeatureOp::emit_feature(_name, 0, bias, fea_result_set, copy_value);
 }
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

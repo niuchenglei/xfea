@@ -2,6 +2,8 @@
 #define XFEA_BISHENG_CORE_FEA_RESULT_SET_H_
 
 #include "common/bisheng_common.h"
+#include <boost/unordered_map.hpp>
+#include <vector>
 
 XFEA_BISHENG_NAMESPACE_GUARD_BEGIN
 
@@ -18,11 +20,12 @@ public:
         is_hash = false;
         origin_fea_sign = 0;
         final_fea_sign = 0; 
+        is_valid = false;
     }
 
     char fea_text[GlobalParameter::kMaxFeaTextResultSize];         // 特征明文内容
     int32_t fea_slot;                                              // 所属特征类ID
-    bool is_hash;                                                  // 是否需要hash
+    bool is_hash, is_valid;                                        // 是否需要hash，是否有效
     uint64_t origin_fea_sign;                                      // 原始特征签名
     uint64_t final_fea_sign;                                       // 变换后的特征签名
 
@@ -51,6 +54,8 @@ public:
             _fea_result_array[i].reset();
         }*/
         _fea_result_num = 0;
+        _fea_name_idx.clear();
+        _fea_name_num.clear();
     }
 
     // 获取样本中的首个特征及样本中特征的个数
@@ -75,7 +80,7 @@ public:
     }
 
     // 填充一个特征明文为char*的特征提取结果
-    ReturnCode fill_fea_result(const char* value, const int32_t fea_slot,
+    ReturnCode fill_fea_result(const std::string& name, const int idx, const char* value, const int32_t fea_slot,
                                const bool is_hash = false, const uint64_t origin_fea_sign = 0, const uint64_t final_fea_sign = 0, bool copy_value = true);
 
     // 资源回收
@@ -86,6 +91,8 @@ public:
 private:
     fea_result_t _fea_result_array[GlobalParameter::kMaxFeaResultNum];  // 样本（特征的数组）
     uint32_t _fea_result_num;                                           // 样本中特征的个数
+    boost::unordered_map<std::string, std::vector<int> > _fea_name_idx;
+    boost::unordered_map<std::string, int > _fea_name_num;
 
     FeaResultSet(const FeaResultSet&);
     void operator=(const FeaResultSet&);

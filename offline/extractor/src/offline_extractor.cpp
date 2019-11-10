@@ -64,6 +64,8 @@ void OfflineExtractor::MapOutput(const FeaResultSet& fea_result_set, const std::
          if (NULL == fea_result) {
             std::cerr << "get index " << i << " fea_result failed!" << std::endl;
             return;
+         } else if (fea_result->is_valid == false) {
+            return;
          } else {
             oss << fea_result->final_fea_sign << ":" << fea_result->fea_slot << " ";
             //slot:sign:{text}\tview\tclk\tfeature\n;

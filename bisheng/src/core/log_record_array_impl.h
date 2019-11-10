@@ -30,6 +30,10 @@ public:
 
     // 检查是否可供特征提取使用（是否所有的字段都已填充值)
     virtual bool is_valid() const;
+    virtual bool is_update(const int field_index) const {
+        return _is_update[field_index];
+    }
+    virtual void set_update(bool flag);
 
     // 获取字段值
     virtual const char* get_value(const int field_index) const;
@@ -48,6 +52,7 @@ private:
     const char* _value_buf_ptr[GlobalParameter::kMaxRecordFieldNum];
     char _value_buf[GlobalParameter::kMaxRecordFieldNum][GlobalParameter::kMaxRecordFieldValueSize];  // 存储存储的多个字段
     bool _is_set[GlobalParameter::kMaxRecordFieldNum];                                                // 标识字段是否被填充
+    bool _is_update[GlobalParameter::kMaxRecordFieldNum];                                             // 标识字段是否被更新
     uint32_t _already_filled_field_num;                                                               // 已经填充的字段总数
     uint32_t _expected_field_num;                                                                     // 期望填充的字段总数
     ExtractorConfig* _extractor_config;                                                               // 存储特征提取引擎的所有配置的对象指针（外部传递赋值）

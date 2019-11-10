@@ -3,6 +3,10 @@
 
 XFEA_BISHENG_NAMESPACE_GUARD_BEGIN
 
+const char* xfea_error_msg() {
+    return __xfea_msg;
+}
+
 #define DELETE_IF_NOT_NULL(var) \
 if (NULL != var) { \
     var->finalize(); \
@@ -104,6 +108,9 @@ ReturnCode Extractor::extract_features_from_record(bool copy_value) {
         return RC_WARNING;
     }
 
+    // 执行完，把所有 record 设为未更新
+    _record->set_update(false);
+
     return RC_SUCCESS;
 }
 
@@ -115,5 +122,8 @@ void Extractor::finalize() {
     DELETE_IF_NOT_NULL(_extractor_config);
 }
 #undef DELETE_IF_NOT_NULL
+
+char __xfea_msg[65536] = {0};
+int __xfea_msg_len = 0;
 
 XFEA_BISHENG_NAMESPACE_GUARD_END

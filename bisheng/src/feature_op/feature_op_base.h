@@ -44,7 +44,7 @@ public:
         _is_need_hash = fea_op_config.is_need_hash;
         _hash_range_min = fea_op_config.hash_range_min;
         _hash_range_max = fea_op_config.hash_range_max;
-        if (_hash_range_min < _hash_range_max)
+        if (_hash_range_min > _hash_range_max)
           _hash_range_min = _hash_range_max;
         _hash_range = _hash_range_max - _hash_range_min;
     }
@@ -68,7 +68,7 @@ public:
 
 protected:
     // 将提取的特征明文进行签名变换等操作，并将相关结果存入fea_result_set
-    virtual ReturnCode emit_feature(const char* fea_text, FeaResultSet& fea_result_set, bool copy_value = true) = 0;
+    virtual ReturnCode emit_feature(const std::string& name, const int idx, const char* fea_text, FeaResultSet& fea_result_set, bool copy_value = true) = 0;
 
 protected:
     // 讨论：目前变量定义成protected，方便子类操作，更好的方式是提供get接口

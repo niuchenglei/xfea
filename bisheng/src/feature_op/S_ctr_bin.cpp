@@ -185,6 +185,10 @@ ReturnCode S_ctr_bin::generate_fea(const LogRecordInterface& record, FeaResultSe
     // 获取抽取特征依赖的字段的index
     // 使用at有抛出异常的风险（init函数要做好_depend_col_index_vec size检查）
     int depend_col_field_index = _depend_col_index_vec.at(0);
+
+    if (!record.is_update(depend_col_field_index))
+        return RC_SUCCESS;
+
     // 获取其对应的字段值
     const char* fea_text = record.get_value(depend_col_field_index);
     if (NULL == fea_text) {
@@ -197,7 +201,7 @@ ReturnCode S_ctr_bin::generate_fea(const LogRecordInterface& record, FeaResultSe
     std::string v = boost::lexical_cast<std::string>(ctr_bin);
 
     // 计算特征签名及将抽取的特征放入fea_result_set，emit_feature位于SingleSlotFeatureOp
-    return SingleSlotFeatureOp::emit_feature(v.c_str(), fea_result_set, copy_value);
+    return SingleSlotFeatureOp::emit_feature(_name, 0, v.c_str(), fea_result_set, copy_value);
 }
 
 XFEA_BISHENG_NAMESPACE_GUARD_END
