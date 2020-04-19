@@ -5,7 +5,7 @@ COLOR_END="\033[0m"
 
 CXX=g++
 RM=rm
-CXXFLAGS= -w -O3 -W -Wall -fPIC
+CXXFLAGS=-std=c++11 -w -O3 -W -Wall -fPIC -D_GLIBCXX_USE_CXX11_ABI=1
 CUR_VERSION=$(shell git describe --always)
 COMPILE_HOSTNAME=$(shell hostname)
 COMPILE_PWD=$(shell pwd)
@@ -33,7 +33,7 @@ all: $(FEALIB_LIB)
 $(FEALIB_LIB): $(FEALIB_OBJS) 
 	@echo "[ar:'$^'][Target:'$@']"
 	@mkdir -p $(FEALIB_OUTPUT)/lib
-	ar rcs $@ $^
+	ar rcs -D_GLIBCXX_USE_CXX11_ABI=1 $@ $^
 	-@$(RM) -rf $(LIB_BASE_DIR)/*/*.o
 
 %.o: %.cpp $(LIB_BASE_DIR)/*/*.h
